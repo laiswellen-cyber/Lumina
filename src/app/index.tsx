@@ -152,49 +152,55 @@ const LandingPage: React.FC = () => {
             width: 44,
             height: 44,
             borderRadius: 22,
-            backgroundColor: "rgba(255,255,255,0.08)",
+            backgroundColor: menuOpen ? "#fbbf24" : "rgba(251, 191, 36, 0.2)",
             justifyContent: "center",
-            alignItems: "center"
+            alignItems: "center",
+            borderWidth: 2,
+            borderColor: menuOpen ? "#fbbf24" : "rgba(251, 191, 36, 0.5)"
           }}
         >
-          <Ionicons name="ellipsis-vertical" size={22} color="#f8fafc" />
+          <Ionicons name="ellipsis-vertical" size={22} color={menuOpen ? "#050816" : "#fbbf24"} />
         </TouchableOpacity>
 
         {menuOpen ? (
           <View
             style={{
               marginTop: 12,
-              width: 200,
+              width: 240,
               borderRadius: 18,
-              backgroundColor: "rgba(15, 23, 42, 0.96)",
-              borderWidth: 1,
-              borderColor: "rgba(148, 163, 184, 0.18)",
+              backgroundColor: "rgba(15, 23, 42, 0.98)",
+              borderWidth: 2,
+              borderColor: "#fbbf24",
               padding: 8,
-              shadowColor: "#000",
+              shadowColor: "#fbbf24",
               shadowOffset: { width: 0, height: 10 },
-              shadowOpacity: 0.12,
+              shadowOpacity: 0.25,
               shadowRadius: 16,
-              elevation: 10
+              elevation: 12
             }}
           >
             <TouchableOpacity
               onPress={() => setSportsMenuOpen(!sportsMenuOpen)}
               style={{
                 paddingVertical: 12,
-                paddingHorizontal: 10,
+                paddingHorizontal: 12,
                 borderRadius: 14,
-                backgroundColor: "rgba(255,255,255,0.04)",
+                backgroundColor: "rgba(251, 191, 36, 0.08)",
                 flexDirection: "row",
                 justifyContent: "space-between",
-                alignItems: "center"
+                alignItems: "center",
+                marginBottom: 4
               }}
             >
-              <Text style={{ color: "#f8fafc", fontWeight: "700", fontSize: 15 }}>Esportes</Text>
-              <Ionicons name={sportsMenuOpen ? "chevron-up" : "chevron-down"} size={16} color="#f8fafc" />
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                <Ionicons name="baseball" size={18} color="#fbbf24" />
+                <Text style={{ color: "#fbbf24", fontWeight: "700", fontSize: 15 }}>Esportes</Text>
+              </View>
+              <Ionicons name={sportsMenuOpen ? "chevron-up" : "chevron-down"} size={16} color="#fbbf24" />
             </TouchableOpacity>
 
             {sportsMenuOpen ? (
-              <View style={{ paddingLeft: 10, marginTop: 8, borderLeftWidth: 1, borderLeftColor: "rgba(148, 163, 184, 0.2)" }}>
+              <View style={{ paddingLeft: 10, marginTop: 8, marginBottom: 8, borderLeftWidth: 2, borderLeftColor: "#fbbf24" }}>
                 {SPORTS.map((sport) => (
                   <TouchableOpacity
                     key={sport}
@@ -213,14 +219,14 @@ const LandingPage: React.FC = () => {
                         height: 18,
                         borderRadius: 4,
                         borderWidth: 2,
-                        borderColor: selectedSports.includes(sport) ? "#8b5cf6" : "#94a3b8",
-                        backgroundColor: selectedSports.includes(sport) ? "#8b5cf6" : "transparent",
+                        borderColor: selectedSports.includes(sport) ? "#fbbf24" : "#94a3b8",
+                        backgroundColor: selectedSports.includes(sport) ? "#fbbf24" : "transparent",
                         justifyContent: "center",
                         alignItems: "center"
                       }}
                     >
                       {selectedSports.includes(sport) && (
-                        <Ionicons name="checkmark" size={12} color="#f8fafc" />
+                        <Ionicons name="checkmark" size={12} color="#050816" />
                       )}
                     </View>
                     <Text style={{ color: "#e2e8f0", fontWeight: "500", fontSize: 13 }}>{sport}</Text>
@@ -228,20 +234,80 @@ const LandingPage: React.FC = () => {
                 ))}
               </View>
             ) : null}
+
+            <View style={{ borderTopWidth: 1, borderTopColor: "rgba(251, 191, 36, 0.2)", marginVertical: 4 }} />
+
+            <TouchableOpacity
+              onPress={() => {
+                setMenuOpen(false);
+                Alert.alert("Configurações", "Abrindo configurações do aplicativo...");
+              }}
+              style={{
+                paddingVertical: 12,
+                paddingHorizontal: 12,
+                borderRadius: 14,
+                backgroundColor: "rgba(255,255,255,0.02)",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+                marginVertical: 2
+              }}
+            >
+              <Ionicons name="settings" size={18} color="#e2e8f0" />
+              <Text style={{ color: "#e2e8f0", fontWeight: "600", fontSize: 14 }}>Configurações</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                setMenuOpen(false);
+                Alert.alert("Privacidade", "Abrindo ferramentas de privacidade...");
+              }}
+              style={{
+                paddingVertical: 12,
+                paddingHorizontal: 12,
+                borderRadius: 14,
+                backgroundColor: "rgba(255,255,255,0.02)",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+                marginVertical: 2
+              }}
+            >
+              <Ionicons name="shield-checkmark" size={18} color="#e2e8f0" />
+              <Text style={{ color: "#e2e8f0", fontWeight: "600", fontSize: 14 }}>Privacidade</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                setMenuOpen(false);
+                Alert.alert("Perfil", "Abrindo seu perfil...");
+              }}
+              style={{
+                paddingVertical: 12,
+                paddingHorizontal: 12,
+                borderRadius: 14,
+                backgroundColor: "rgba(255,255,255,0.02)",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+                marginVertical: 2
+              }}
+            >
+              <Ionicons name="person-circle" size={18} color="#e2e8f0" />
+              <Text style={{ color: "#e2e8f0", fontWeight: "600", fontSize: 14 }}>Ver Perfil</Text>
+            </TouchableOpacity>
           </View>
         ) : null}
       </View>
 
+      <Text style={{ color: "#fbbf24", fontSize: 48, fontWeight: "900", textAlign: "center", marginTop: 28, letterSpacing: 2, textShadowColor: "rgba(251, 191, 36, 0.4)", textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 8 }}>LUMINA</Text>
+      <Text style={{ color: "#f59e0b", fontSize: 14, fontWeight: "600", textAlign: "center", marginTop: 4, letterSpacing: 1.5, textTransform: "uppercase" }}>Bem-estar em Movimento</Text>
+
       <Image
         source={require("../../assets/images/volei.jpeg")}
-        style={{ width: width - 40, height: 220, borderRadius: 16, alignSelf: "center", marginTop: 8 }}
+        style={{ width: width - 40, height: 220, borderRadius: 16, alignSelf: "center", marginTop: 20, borderWidth: 2, borderColor: "#fbbf24" }}
         resizeMode="cover"
       />
-
-      <Text style={{ color: "#f8fafc", fontSize: 30, fontWeight: "800", textAlign: "center", marginTop: 18 }}>Lumina</Text>
-      <Text style={{ color: "#cbd5e1", fontSize: 16, textAlign: "center", marginTop: 8, lineHeight: 22 }}>
-        Sua rotina de bem-estar começa aqui.
-      </Text>
 
       <View style={{ marginTop: 18, backgroundColor: "rgba(15, 23, 42, 0.96)", borderRadius: 20, padding: 18, borderWidth: 1, borderColor: "rgba(129, 140, 248, 0.2)" }}>
         <View style={{ marginBottom: 18 }}>
