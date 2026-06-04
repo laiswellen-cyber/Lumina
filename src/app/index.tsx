@@ -1,12 +1,14 @@
-﻿import { useRouter } from "expo-router";
+﻿import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import AuthContext from "../AuthContext";
 import { Button, Loading } from "../components";
 
 const LandingPage: React.FC = () => {
   const router = useRouter();
   const { token, loading } = React.useContext(AuthContext);
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (loading) return;
@@ -26,6 +28,56 @@ const LandingPage: React.FC = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#050816", paddingHorizontal: 20, paddingVertical: 32, justifyContent: "center" }}>
+      <View style={{ position: "absolute", top: 24, right: 20, zIndex: 10 }}>
+        <TouchableOpacity
+          onPress={() => setMenuOpen((current) => !current)}
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 22,
+            backgroundColor: "rgba(255,255,255,0.08)",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          <Ionicons name="ellipsis-vertical" size={22} color="#f8fafc" />
+        </TouchableOpacity>
+
+        {menuOpen ? (
+          <View
+            style={{
+              marginTop: 12,
+              width: 160,
+              borderRadius: 18,
+              backgroundColor: "rgba(15, 23, 42, 0.96)",
+              borderWidth: 1,
+              borderColor: "rgba(148, 163, 184, 0.18)",
+              padding: 8,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 10 },
+              shadowOpacity: 0.12,
+              shadowRadius: 16,
+              elevation: 10
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                setMenuOpen(false);
+                router.push("/profile");
+              }}
+              style={{
+                paddingVertical: 12,
+                paddingHorizontal: 10,
+                borderRadius: 14,
+                backgroundColor: "rgba(255,255,255,0.04)"
+              }}
+            >
+              <Text style={{ color: "#f8fafc", fontWeight: "700", fontSize: 15 }}>Perfil</Text>
+            </TouchableOpacity>
+          </View>
+        ) : null}
+      </View>
+
       <Text style={{ color: "#f8fafc", fontSize: 30, fontWeight: "800", textAlign: "center" }}>Lumina</Text>
       <Text style={{ color: "#cbd5e1", fontSize: 16, textAlign: "center", marginTop: 8, lineHeight: 22 }}>
         Sua rotina de bem-estar começa aqui.

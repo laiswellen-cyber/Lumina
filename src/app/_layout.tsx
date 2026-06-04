@@ -26,8 +26,6 @@ const Layout: React.FC = () => {
               iconName = "map";
             } else if (route.name === "recover") {
               iconName = "barbell";
-            } else if (route.name === "profile") {
-              iconName = "person";
             }
 
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -38,7 +36,6 @@ const Layout: React.FC = () => {
         <Tabs.Screen name="projects" options={{ title: "Projetos" }} />
         <Tabs.Screen name="nearby" options={{ title: "Locais" }} />
         <Tabs.Screen name="recover" options={{ title: "IMC" }} />
-        <Tabs.Screen name="profile" options={{ title: "Perfil" }} />
       </Tabs>
     </AuthProvider>
   );
