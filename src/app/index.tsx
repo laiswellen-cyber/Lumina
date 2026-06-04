@@ -177,22 +177,7 @@ const LandingPage: React.FC = () => {
               elevation: 10
             }}
           >
-            <TouchableOpacity
-              onPress={() => {
-                setMenuOpen(false);
-                router.push("/profile");
-              }}
-              style={{
-                paddingVertical: 12,
-                paddingHorizontal: 10,
-                borderRadius: 14,
-                backgroundColor: "rgba(255,255,255,0.04)",
-                marginBottom: 4
-              }}
-            >
-              <Text style={{ color: "#f8fafc", fontWeight: "700", fontSize: 15 }}>Perfil</Text>
-            </TouchableOpacity>
-
+    
             <TouchableOpacity
               onPress={() => setSportsMenuOpen(!sportsMenuOpen)}
               style={{
