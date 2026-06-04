@@ -2,13 +2,18 @@
 import { useRouter } from "expo-router";
 import React from "react";
 import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import AuthContext from "../AuthContext";
 import { Button, Loading } from "../components";
+
+const SPORTS = ["Futebol", "Vôlei", "Basquete", "Natação", "Corrida", "Yoga", "Musculação", "Ciclismo"];
 
 const LandingPage: React.FC = () => {
   const router = useRouter();
   const { token, loading } = React.useContext(AuthContext);
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [sportsMenuOpen, setSportsMenuOpen] = React.useState(false);
+  const [selectedSports, setSelectedSports] = React.useState<string[]>([]);
 
   React.useEffect(() => {
     if (loading) return;
@@ -16,7 +21,35 @@ const LandingPage: React.FC = () => {
     if (token) {
       router.replace("/nearby");
     }
+
+    // Carregar preferências de esportes salvas
+    const loadSports = async () => {
+      try {
+        const saved = await AsyncStorage.getItem("preferred_sports");
+        if (saved) {
+          setSelectedSports(JSON.parse(saved));
+        }
+      } catch (e) {
+        console.warn("Erro ao carregar esportes preferidos", e);
+      }
+    };
+    loadSports();
   }, [loading, router, token]);
+
+  const handleToggleSport = async (sport: string) => {
+    setSelectedSports((prev) => {
+      const updated = prev.includes(sport)
+        ? prev.filter((s) => s !== sport)
+        : [...prev, sport];
+      
+      // Salvar no AsyncStorage
+      AsyncStorage.setItem("preferred_sports", JSON.stringify(updated)).catch(
+        (e) => console.warn("Erro ao salvar esportes preferidos", e)
+      );
+      
+      return updated;
+    });
+  };
 
   if (loading) {
     return (
@@ -50,7 +83,7 @@ const LandingPage: React.FC = () => {
           <View
             style={{
               marginTop: 12,
-              width: 160,
+              width: 200,
               borderRadius: 18,
               backgroundColor: "rgba(15, 23, 42, 0.96)",
               borderWidth: 1,
@@ -72,11 +105,64 @@ const LandingPage: React.FC = () => {
                 paddingVertical: 12,
                 paddingHorizontal: 10,
                 borderRadius: 14,
-                backgroundColor: "rgba(255,255,255,0.04)"
+                backgroundColor: "rgba(255,255,255,0.04)",
+                marginBottom: 4
               }}
             >
               <Text style={{ color: "#f8fafc", fontWeight: "700", fontSize: 15 }}>Perfil</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setSportsMenuOpen(!sportsMenuOpen)}
+              style={{
+                paddingVertical: 12,
+                paddingHorizontal: 10,
+                borderRadius: 14,
+                backgroundColor: "rgba(255,255,255,0.04)",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center"
+              }}
+            >
+              <Text style={{ color: "#f8fafc", fontWeight: "700", fontSize: 15 }}>Esportes</Text>
+              <Ionicons name={sportsMenuOpen ? "chevron-up" : "chevron-down"} size={16} color="#f8fafc" />
+            </TouchableOpacity>
+
+            {sportsMenuOpen ? (
+              <View style={{ paddingLeft: 10, marginTop: 8, borderLeftWidth: 1, borderLeftColor: "rgba(148, 163, 184, 0.2)" }}>
+                {SPORTS.map((sport) => (
+                  <TouchableOpacity
+                    key={sport}
+                    onPress={() => handleToggleSport(sport)}
+                    style={{
+                      paddingVertical: 8,
+                      paddingHorizontal: 10,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 8
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: 18,
+                        height: 18,
+                        borderRadius: 4,
+                        borderWidth: 2,
+                        borderColor: selectedSports.includes(sport) ? "#8b5cf6" : "#94a3b8",
+                        backgroundColor: selectedSports.includes(sport) ? "#8b5cf6" : "transparent",
+                        justifyContent: "center",
+                        alignItems: "center"
+                      }}
+                    >
+                      {selectedSports.includes(sport) && (
+                        <Ionicons name="checkmark" size={12} color="#f8fafc" />
+                      )}
+                    </View>
+                    <Text style={{ color: "#e2e8f0", fontWeight: "500", fontSize: 13 }}>{sport}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : null}
           </View>
         ) : null}
       </View>

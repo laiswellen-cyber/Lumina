@@ -1,9 +1,9 @@
 import { Formik, FormikHelpers } from "formik";
 import React from "react";
-import { Animated, Easing, Text } from "react-native";
+import { Animated, Easing, Keyboard, ScrollView, Text, TouchableWithoutFeedback } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { Area, Button, Container, TextInput, Title } from "../components";
+import { Area, Button, TextInput, Title } from "../components";
 
 type ImcValues = {
   weight: string;
@@ -65,6 +65,9 @@ const RecoverPage: React.FC = () => {
     setCategory(categoryValue);
     setTip(tipValue);
     setResult(`IMC: ${normalized} — ${categoryValue}`);
+
+    // Fechar o teclado após calcular para melhorar a leitura do resultado
+    Keyboard.dismiss();
   };
 
   React.useEffect(() => {
@@ -101,8 +104,14 @@ const RecoverPage: React.FC = () => {
 
   return (
     <LinearGradient colors={["#0c2c5a", "#071a3b"]} style={{ flex: 1 }}>
-      <Container style={{ flex: 1, padding: 24, justifyContent: "center" }}>
-        <Area style={{ width: "100%", alignItems: "center", marginBottom: 24 }}>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <ScrollView
+          scrollEnabled={true}
+          contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingVertical: 24 }}
+          onScroll={() => Keyboard.dismiss()}
+          scrollEventThrottle={16}
+        >
+          <Area style={{ width: "100%", alignItems: "center", marginBottom: 24 }}>
           <Title style={{ color: "#f8fafc", fontSize: 28, fontWeight: "bold", textAlign: "center" }}>
             IMC
           </Title>
@@ -278,9 +287,10 @@ const RecoverPage: React.FC = () => {
             >
               Voltar
             </Button>
-          </Area>
+            </Area>
         </Animated.View>
-      </Container>
+        </ScrollView>
+      </TouchableWithoutFeedback>
     </LinearGradient>
   );
 };

@@ -1,6 +1,8 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { AuthProvider } from "../AuthContext";
 
 const Layout: React.FC = () => {
@@ -17,7 +19,7 @@ const Layout: React.FC = () => {
             height: 70,
             paddingBottom: 8,
           },
-          tabBarIcon: ({ color, size }) => {
+          tabBarIcon: ({ color, size, focused }) => {
             let iconName: React.ComponentProps<typeof Ionicons>["name"] = "home";
 
             if (route.name === "projects") {
@@ -28,7 +30,11 @@ const Layout: React.FC = () => {
               iconName = "barbell";
             }
 
-            return <Ionicons name={iconName} size={size} color={color} />;
+            return (
+              <Animated.View style={{ opacity: focused ? 1 : 0.6 }}>
+                <Ionicons name={iconName} size={size} color={color} />
+              </Animated.View>
+            );
           },
         })}
       >
