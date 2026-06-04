@@ -1,7 +1,7 @@
 ﻿import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import AuthContext from "../AuthContext";
 import { Button, Loading } from "../components";
 
@@ -84,6 +84,18 @@ const LandingPage: React.FC = () => {
       </Text>
 
       <View style={{ marginTop: 24, backgroundColor: "rgba(15, 23, 42, 0.96)", borderRadius: 20, padding: 18, borderWidth: 1, borderColor: "rgba(129, 140, 248, 0.2)" }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 12, marginBottom: 18 }}>
+          <Image
+            source={require("../../assets/images/volei.jpeg")}
+            style={{ flex: 1, height: 120, borderRadius: 16 }}
+            resizeMode="cover"
+          />
+          <Image
+            source={require("../../assets/images/figurinhas.jpg")}
+            style={{ flex: 1, height: 120, borderRadius: 16 }}
+            resizeMode="cover"
+          />
+        </View>
         <Text style={{ color: "#e2e8f0", fontSize: 18, fontWeight: "700", marginBottom: 6 }}>Benefícios do esporte</Text>
         <Text style={{ color: "#cbd5e1", fontSize: 14, lineHeight: 20 }}>
           Praticar esportes melhora a saúde física, aumenta a disposição, fortalece o bem-estar mental e ajuda a criar hábitos mais ativos no dia a dia.
