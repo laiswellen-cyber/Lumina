@@ -1,8 +1,8 @@
-﻿import { Formik, FormikHelpers } from "formik";
+﻿import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { Formik, FormikHelpers } from "formik";
 import React from "react";
 import { Alert, Text } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import AuthContext from "../AuthContext";
 import { Area, Button, Container, Loading, TextInput, Title } from "../components";
 import { GRAPHQL_ENDPOINT } from "../config/auth";
@@ -79,7 +79,7 @@ const SignUpPage: React.FC = () => {
 
       await login(token ?? DEFAULT_TOKEN);
       Alert.alert("Conta criada", "Cadastro realizado com sucesso.");
-      router.push("/nearby");
+      router.replace("/nearby");
     } catch (e) {
       console.log(e);
       Alert.alert("Erro!", `${e instanceof Error ? e.message : "Falha na requisição"}`);

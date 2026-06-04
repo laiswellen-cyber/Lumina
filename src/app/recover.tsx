@@ -57,6 +57,16 @@ const RecoverPage: React.FC = () => {
     const calculatedImc = weight / (height * height);
     const normalized = Number(calculatedImc.toFixed(1));
     const categoryValue = getImcCategory(normalized);
+
+    router.push({
+      pathname: "/imc-result",
+      params: {
+        imc: String(normalized),
+        category: categoryValue,
+        tip: getHealthTip(categoryValue)
+      }
+    });
+
     setImc(normalized);
     setCategory(categoryValue);
     setResult(`IMC: ${normalized} — ${categoryValue}`);

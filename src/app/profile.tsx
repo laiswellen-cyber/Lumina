@@ -1,18 +1,20 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { Formik, FormikHelpers } from "formik";
 import React from "react";
 import { Alert, Animated, Easing, ScrollView, Text } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Formik, FormikHelpers } from "formik";
-import { useRouter } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
 import AuthContext from "../AuthContext";
 import { Area, Button, Container, Loading, TextInput, Title } from "../components";
+import { isFirebaseReady, loadProfileFromCloud, saveProfileToCloud } from "../config/firebase";
+import { loadProfileLocally, saveProfileLocally } from "../config/dexie";
 
 const PROFILE_STORAGE_KEY = "user_profile";
 const DEFAULT_TOKEN = "demo-token";
 
 type ProfileValues = {
-  name?: string;
-  email?: string;
+  name: string;
+  email: string;
   password?: string;
   residence?: string;
   sports: string;
@@ -26,7 +28,7 @@ const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{}
 const defaultValues: ProfileValues = {
   name: "",
   email: "",
-  password: undefined,
+  password: "",
   residence: "",
   sports: "",
   dance: ""
@@ -34,7 +36,7 @@ const defaultValues: ProfileValues = {
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
-  const { token, login, loading: authLoading } = React.useContext(AuthContext);
+  const { token, login } = React.useContext(AuthContext);
   const [initialValues, setInitialValues] = React.useState<ProfileValues>(defaultValues);
   const [profileLoading, setProfileLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
@@ -45,9 +47,22 @@ const ProfilePage: React.FC = () => {
   React.useEffect(() => {
     const loadProfile = async () => {
       try {
+        if (isFirebaseReady && token) {
+          const cloudProfile = await loadProfileFromCloud(token);
+          if (cloudProfile) {
+            setInitialValues({ ...defaultValues, ...(cloudProfile as Partial<ProfileValues>) });
+          }
+        }
+
         const stored = await AsyncStorage.getItem(PROFILE_STORAGE_KEY);
         if (stored) {
-          setInitialValues(JSON.parse(stored));
+          const parsed = JSON.parse(stored) as Partial<ProfileValues>;
+          setInitialValues((prev) => ({ ...prev, ...parsed }));
+        }
+
+        const localProfile = await loadProfileLocally();
+        if (localProfile) {
+          setInitialValues((prev) => ({ ...prev, ...localProfile }));
         }
       } catch (e) {
         console.warn("Falha ao carregar perfil", e);
@@ -96,9 +111,14 @@ const ProfilePage: React.FC = () => {
   ) => {
     setSaving(true);
     try {
+      if (isFirebaseReady && token) {
+        await saveProfileToCloud(token, values);
+      }
+
+      await saveProfileLocally(values as any);
       await AsyncStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(values));
       setInitialValues(values);
-      Alert.alert("Perfil salvo", "Seus dados foram atualizados com sucesso.");
+      Alert.alert("Perfil salvo", "Seus dados foram atualizados com sucesso na nuvem e localmente.");
     } catch (e) {
       console.warn("Erro ao salvar perfil", e);
       Alert.alert("Erro", "Não foi possível salvar seus dados no momento.");
@@ -113,12 +133,17 @@ const ProfilePage: React.FC = () => {
   ) => {
     setSaving(true);
     try {
-      const height = 0;
-      const weight = 0;
       const tokenValue = DEFAULT_TOKEN;
       await login(tokenValue);
-      Alert.alert("Conta criada", "Agora você pode editar seu perfil.");
-      router.replace("/profile");
+
+      if (isFirebaseReady) {
+        await saveProfileToCloud(tokenValue, values);
+      }
+
+      await saveProfileLocally(values as any);
+      await AsyncStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(values));
+      Alert.alert("Conta criada", "Agora você pode acessar o aplicativo completo com sincronização local e em nuvem.");
+      router.replace("/nearby");
     } catch (e) {
       console.warn("Erro ao registrar", e);
       Alert.alert("Erro", "Não foi possível criar sua conta no momento.");
@@ -216,25 +241,11 @@ const ProfilePage: React.FC = () => {
 
           <Animated.View style={[{ width: "100%", gap: 18 }, formAnimation]}>
             <Formik
-              initialValues={
-                isAuthenticated
-                  ? {
-                      sports: initialValues.sports,
-                      dance: initialValues.dance
-                    }
-                  : {
-                      name: "",
-                      email: "",
-                      password: "",
-                      residence: "",
-                      sports: "",
-                      dance: ""
-                    }
-              }
+              initialValues={initialValues}
               enableReinitialize={isAuthenticated}
               validate={(values) => {
                 const errors: Partial<Record<keyof ProfileValues, string>> = {};
-                if (!values.name.trim()) {
+                if (!values.name?.trim()) {
                   errors.name = "Informe um nome real.";
                 } else if (!nameRegex.test(values.name.trim())) {
                   errors.name = "Use um nome real com pelo menos duas palavras.";

@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { doc, getDoc, getFirestore, serverTimestamp, setDoc } from 'firebase/firestore';
 
-// Cole aqui os dados REAIS do seu console do Firebase
 const firebaseConfig = {
   apiKey: "SUA_API_KEY_AQUI",
   authDomain: "SEU_AUTH_DOMAIN_AQUI",
@@ -11,8 +10,36 @@ const firebaseConfig = {
   appId: "SEU_APP_ID_AQUI"
 };
 
-// Inicializa o Firebase
-const app = initializeApp(firebaseConfig);
+const hasRealFirebaseConfig = Object.values(firebaseConfig).every((value) => {
+  const text = String(value ?? '').trim();
+  return text.length > 0 && !text.startsWith('SUA_') && !text.startsWith('SEU_');
+});
 
-// Inicializa e exporta o Firestore (db)
-export const db = getFirestore(app);
+const app = hasRealFirebaseConfig ? initializeApp(firebaseConfig) : null;
+
+export const db = app ? getFirestore(app) : null;
+export const isFirebaseReady = Boolean(db);
+
+export const saveProfileToCloud = async (userId: string, profile: Record<string, unknown>) => {
+  if (!db) {
+    throw new Error('Firebase não configurado. Configure as credenciais reais do Firebase para salvar na nuvem.');
+  }
+
+  await setDoc(
+    doc(db, 'profiles', userId),
+    {
+      ...profile,
+      updatedAt: serverTimestamp()
+    },
+    { merge: true }
+  );
+};
+
+export const loadProfileFromCloud = async (userId: string) => {
+  if (!db) {
+    return null;
+  }
+
+  const snapshot = await getDoc(doc(db, 'profiles', userId));
+  return snapshot.exists() ? snapshot.data() : null;
+};
