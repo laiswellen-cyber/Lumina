@@ -1,7 +1,7 @@
 ﻿import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import AuthContext from "../AuthContext";
 import { Button, Loading } from "../components";
 
@@ -26,8 +26,11 @@ const LandingPage: React.FC = () => {
     );
   }
 
+  const { width } = Dimensions.get("window");
+
   return (
-    <View style={{ flex: 1, backgroundColor: "#050816", paddingHorizontal: 20, paddingVertical: 32, justifyContent: "center" }}>
+    <View style={{ flex: 1, backgroundColor: "#050816" }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 24 }}>
       <View style={{ position: "absolute", top: 24, right: 20, zIndex: 10 }}>
         <TouchableOpacity
           onPress={() => setMenuOpen((current) => !current)}
@@ -78,21 +81,22 @@ const LandingPage: React.FC = () => {
         ) : null}
       </View>
 
-      <Text style={{ color: "#f8fafc", fontSize: 30, fontWeight: "800", textAlign: "center" }}>Lumina</Text>
+      <Image
+        source={require("../../assets/images/volei.jpeg")}
+        style={{ width: width - 40, height: 220, borderRadius: 16, alignSelf: "center", marginTop: 8 }}
+        resizeMode="cover"
+      />
+
+      <Text style={{ color: "#f8fafc", fontSize: 30, fontWeight: "800", textAlign: "center", marginTop: 18 }}>Lumina</Text>
       <Text style={{ color: "#cbd5e1", fontSize: 16, textAlign: "center", marginTop: 8, lineHeight: 22 }}>
         Sua rotina de bem-estar começa aqui.
       </Text>
 
-      <View style={{ marginTop: 24, backgroundColor: "rgba(15, 23, 42, 0.96)", borderRadius: 20, padding: 18, borderWidth: 1, borderColor: "rgba(129, 140, 248, 0.2)" }}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 12, marginBottom: 18 }}>
-          <Image
-            source={require("../../assets/images/volei.jpeg")}
-            style={{ flex: 1, height: 120, borderRadius: 16 }}
-            resizeMode="cover"
-          />
+      <View style={{ marginTop: 18, backgroundColor: "rgba(15, 23, 42, 0.96)", borderRadius: 20, padding: 18, borderWidth: 1, borderColor: "rgba(129, 140, 248, 0.2)" }}>
+        <View style={{ marginBottom: 18 }}>
           <Image
             source={require("../../assets/images/figurinhas.jpg")}
-            style={{ flex: 1, height: 120, borderRadius: 16 }}
+            style={{ width: "100%", height: 120, borderRadius: 12 }}
             resizeMode="cover"
           />
         </View>
@@ -112,6 +116,8 @@ const LandingPage: React.FC = () => {
       >
         Criar conta
       </Button>
+
+      </ScrollView>
     </View>
   );
 };
