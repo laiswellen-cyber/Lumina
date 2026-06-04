@@ -177,7 +177,6 @@ const LandingPage: React.FC = () => {
               elevation: 10
             }}
           >
-    
             <TouchableOpacity
               onPress={() => setSportsMenuOpen(!sportsMenuOpen)}
               style={{
