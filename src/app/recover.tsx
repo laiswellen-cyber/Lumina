@@ -1,8 +1,8 @@
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { Formik, FormikHelpers } from "formik";
 import React from "react";
 import { Animated, Easing, Keyboard, ScrollView, Text, TouchableWithoutFeedback } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import { Area, Button, TextInput, Title } from "../components";
 
 type ImcValues = {
