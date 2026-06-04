@@ -41,32 +41,31 @@ const RecoverPage: React.FC = () => {
   const fade = React.useRef(new Animated.Value(0)).current;
   const slide = React.useRef(new Animated.Value(24)).current;
 
-  const handleSubmit = (
-    values: ImcValues,
-    _helpers: FormikHelpers<ImcValues>
-  ) => {
-    const weight = Number(values.weight.replace(",", "."));
-    const height = Number(values.height.replace(",", ".")) / 100;
+  const calculateIMC = (weight: string, height: string) => {
+    const weightNum = Number(weight.replace(",", "."));
+    const heightNum = Number(height.replace(",", "."));
 
-    if (!weight || !height || height <= 0) {
-      setResult("Informe peso e altura válidos.");
-      setImc(null);
-      setCategory(null);
+    if (!weightNum || !heightNum || heightNum <= 0) {
       return;
     }
 
-    const calculatedImc = weight / (height * height);
+    const heightInMeters = heightNum / 100;
+    const calculatedImc = weightNum / (heightInMeters * heightInMeters);
     const normalized = Number(calculatedImc.toFixed(1));
     const categoryValue = getImcCategory(normalized);
     const tipValue = getHealthTip(categoryValue);
 
-    // Armazenar resultado localmente e exibir na mesma tela (estado único)
     setImc(normalized);
     setCategory(categoryValue);
     setTip(tipValue);
     setResult(`IMC: ${normalized} — ${categoryValue}`);
+  };
 
-    // Fechar o teclado após calcular para melhorar a leitura do resultado
+  const handleSubmit = (
+    values: ImcValues,
+    _helpers: FormikHelpers<ImcValues>
+  ) => {
+    calculateIMC(values.weight, values.height);
     Keyboard.dismiss();
   };
 
@@ -131,7 +130,10 @@ const RecoverPage: React.FC = () => {
                   placeholder="Peso em kg"
                   placeholderTextColor="#94a3b8"
                   value={values.weight}
-                  onChangeText={handleChange("weight")}
+                  onChangeText={(text) => {
+                    handleChange("weight")(text);
+                    calculateIMC(text, values.height);
+                  }}
                   keyboardType="decimal-pad"
                   style={{
                     width: "100%",
@@ -149,7 +151,10 @@ const RecoverPage: React.FC = () => {
                   placeholder="Altura em cm"
                   placeholderTextColor="#94a3b8"
                   value={values.height}
-                  onChangeText={handleChange("height")}
+                  onChangeText={(text) => {
+                    handleChange("height")(text);
+                    calculateIMC(values.weight, text);
+                  }}
                   keyboardType="decimal-pad"
                   style={{
                     width: "100%",
@@ -180,7 +185,7 @@ const RecoverPage: React.FC = () => {
                   }}
                   textStyle={{ color: "#052e16", fontWeight: "700", fontSize: 16, textAlign: "center" }}
                 >
-                  Calcular IMC
+                  Fechar Teclado
                 </Button>
                 <Button
                   onPress={() => {
