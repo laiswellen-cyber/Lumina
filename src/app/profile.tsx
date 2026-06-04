@@ -47,11 +47,9 @@ const ProfilePage: React.FC = () => {
   React.useEffect(() => {
     const loadProfile = async () => {
       try {
-        if (isFirebaseReady && token) {
-          const cloudProfile = await loadProfileFromCloud(token);
-          if (cloudProfile) {
-            setInitialValues({ ...defaultValues, ...(cloudProfile as Partial<ProfileValues>) });
-          }
+        const localProfile = await loadProfileLocally();
+        if (localProfile) {
+          setInitialValues((prev) => ({ ...prev, ...localProfile }));
         }
 
         const stored = await AsyncStorage.getItem(PROFILE_STORAGE_KEY);
@@ -60,9 +58,17 @@ const ProfilePage: React.FC = () => {
           setInitialValues((prev) => ({ ...prev, ...parsed }));
         }
 
-        const localProfile = await loadProfileLocally();
-        if (localProfile) {
-          setInitialValues((prev) => ({ ...prev, ...localProfile }));
+        if (isFirebaseReady && token) {
+          const cloudProfile = await loadProfileFromCloud(token);
+          if (cloudProfile) {
+            const mergedProfile = {
+              ...defaultValues,
+              ...(localProfile ?? {}),
+              ...(cloudProfile as Partial<ProfileValues>)
+            };
+            setInitialValues(mergedProfile);
+            await saveProfileLocally(mergedProfile as any);
+          }
         }
       } catch (e) {
         console.warn("Falha ao carregar perfil", e);

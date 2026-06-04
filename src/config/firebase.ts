@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { doc, getDoc, getFirestore, serverTimestamp, setDoc } from 'firebase/firestore';
+import { saveProfileLocally } from './dexie';
 
 const firebaseConfig = {
   apiKey: "SUA_API_KEY_AQUI",
@@ -33,6 +34,8 @@ export const saveProfileToCloud = async (userId: string, profile: Record<string,
     },
     { merge: true }
   );
+
+  await saveProfileLocally(profile as any);
 };
 
 export const loadProfileFromCloud = async (userId: string) => {

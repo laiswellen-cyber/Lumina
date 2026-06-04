@@ -31,3 +31,7 @@ export const saveProfileLocally = async (profile: ProfileRecord) => {
 export const loadProfileLocally = async () => {
   return (await db.profiles.toArray()).at(-1) ?? null;
 };
+
+export const syncProfileFromCloud = async (profile: ProfileRecord) => {
+  await saveProfileLocally(profile);
+};
