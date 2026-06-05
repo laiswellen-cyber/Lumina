@@ -242,22 +242,14 @@ const LandingPage: React.FC = () => {
               </View>
             ) : null}
 
-            <TouchableOpacity
-              onPress={() => {
-                setMenuOpen(false);
-                router.push("/sports" as any);
-              }}
-              style={{ paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, backgroundColor: "transparent", marginTop: 4 }}
-            >
-              <Text style={{ color: "#e2e8f0", fontWeight: "600" }}>Gerenciar esportes</Text>
-            </TouchableOpacity>
+            {/* Gerenciar esportes removido (rota deletada) */}
 
             <View style={{ borderTopWidth: 1, borderTopColor: "rgba(251, 191, 36, 0.2)", marginVertical: 4 }} />
 
             <TouchableOpacity
               onPress={() => {
                 setMenuOpen(false);
-                router.push("/settings" as any);
+                Alert.alert("Configurações", "Acesse Configurações via tela dedicada (rota removida).");
               }}
               style={{
                 paddingVertical: 12,
@@ -277,7 +269,7 @@ const LandingPage: React.FC = () => {
             <TouchableOpacity
               onPress={() => {
                 setMenuOpen(false);
-                router.push("/privacy" as any);
+                Alert.alert("Privacidade", "Ferramentas de privacidade foram movidas (rota removida).");
               }}
               style={{
                 paddingVertical: 12,
@@ -297,7 +289,7 @@ const LandingPage: React.FC = () => {
             <TouchableOpacity
               onPress={() => {
                 setMenuOpen(false);
-                router.push("/profile" as any);
+                Alert.alert("Perfil", "A visualização de perfil foi movida (rota removida).");
               }}
               style={{
                 paddingVertical: 12,
