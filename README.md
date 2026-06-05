@@ -13,3 +13,5 @@ O aplicativo foi estruturado com uma interface moderna e intuitiva, dividida em 
  Locais: Integração com mapas para ajudar o usuário a encontrar quadras, praças e pontos públicos de atividade física gratuitos próximos a ele.
  
  IMC: Uma ferramenta prática e direta para o usuário calcular seu Índice de Massa Corporal e monitorar sua saúde física básica.
+
+ Integrante: Lais Wellen Furtado de Moura
