@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Formik, FormikHelpers } from "formik";
 import React from "react";
-import { Alert, Dimensions, Image, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Dimensions, Image, Modal, ScrollView, Text, TouchableOpacity, View, Pressable } from "react-native";
 import AuthContext from "../AuthContext";
 import { Button, Loading, TextInput } from "../components";
 import { GRAPHQL_ENDPOINT } from "../config/auth";
@@ -146,6 +146,13 @@ const LandingPage: React.FC = () => {
     <View style={{ flex: 1, backgroundColor: "#050816" }}>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 24 }}>
       <View style={{ position: "absolute", top: 24, right: 20, zIndex: 10 }}>
+        {menuOpen ? (
+          <Pressable
+            onPress={() => setMenuOpen(false)}
+            style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9 }}
+          />
+        ) : null}
+
         <TouchableOpacity
           onPress={() => setMenuOpen((current) => !current)}
           style={{
@@ -235,12 +242,22 @@ const LandingPage: React.FC = () => {
               </View>
             ) : null}
 
+            <TouchableOpacity
+              onPress={() => {
+                setMenuOpen(false);
+                router.push("/sports");
+              }}
+              style={{ paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, backgroundColor: "transparent", marginTop: 4 }}
+            >
+              <Text style={{ color: "#e2e8f0", fontWeight: "600" }}>Gerenciar esportes</Text>
+            </TouchableOpacity>
+
             <View style={{ borderTopWidth: 1, borderTopColor: "rgba(251, 191, 36, 0.2)", marginVertical: 4 }} />
 
             <TouchableOpacity
               onPress={() => {
                 setMenuOpen(false);
-                Alert.alert("Configurações", "Abrindo configurações do aplicativo...");
+                router.push("/settings");
               }}
               style={{
                 paddingVertical: 12,
@@ -260,7 +277,7 @@ const LandingPage: React.FC = () => {
             <TouchableOpacity
               onPress={() => {
                 setMenuOpen(false);
-                Alert.alert("Privacidade", "Abrindo ferramentas de privacidade...");
+                router.push("/privacy");
               }}
               style={{
                 paddingVertical: 12,
@@ -280,7 +297,7 @@ const LandingPage: React.FC = () => {
             <TouchableOpacity
               onPress={() => {
                 setMenuOpen(false);
-                Alert.alert("Perfil", "Abrindo seu perfil...");
+                router.push("/profile");
               }}
               style={{
                 paddingVertical: 12,
