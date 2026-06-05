@@ -41,22 +41,6 @@ const ProfilePage: React.FC = () => {
       const canUseApi = endpoint.length > 0 && !endpoint.includes("your-graphql-endpoint.com");
 
       if (canUseApi && authContext.token) {
-                } catch (err) {
-                  console.warn("Falha ao chamar API de perfil", err);
-                  // If Firebase is available, try saving to Firebase
-                  if (isFirebaseReady) {
-                    try {
-                      await saveProfileToCloud(String(authContext.token ?? 'local'), values as any);
-                      Alert.alert("Perfil", "Dados salvos no Firebase (fallback).");
-                      return;
-                    } catch (ferr) {
-                      console.warn("Falha ao salvar no Firebase", ferr);
-                    }
-                  }
-                  await AsyncStorage.setItem(PROFILE_KEY, JSON.stringify(values));
-                  Alert.alert("Perfil", "Dados salvos localmente (erro de rede).");
-                  return;
-                }
         const UPDATE_PROFILE = `
           mutation UpdateProfile($name: String!, $email: String!, $height: Float, $weight: Float) {
             updateProfile(name: $name, email: $email, height: $height, weight: $weight) {
@@ -96,6 +80,17 @@ const ProfilePage: React.FC = () => {
           return;
         } catch (err) {
           console.warn("Falha ao chamar API de perfil", err);
+          // If Firebase is available, try saving to Firebase
+          if (isFirebaseReady && authContext.token) {
+            try {
+              await saveProfileToCloud(String(authContext.token ?? 'local'), values as any);
+              Alert.alert("Perfil", "Dados salvos no Firebase (fallback).");
+              return;
+            } catch (ferr) {
+              console.warn("Falha ao salvar no Firebase", ferr);
+            }
+          }
+
           await AsyncStorage.setItem(PROFILE_KEY, JSON.stringify(values));
           Alert.alert("Perfil", "Dados salvos localmente (erro de rede).");
           return;

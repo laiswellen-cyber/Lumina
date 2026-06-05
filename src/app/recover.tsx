@@ -130,7 +130,7 @@ const RecoverPage: React.FC = () => {
                   placeholder="Peso em kg"
                   placeholderTextColor="#94a3b8"
                   value={values.weight}
-                  onChangeText={(text) => {
+                  onChangeText={(text: string) => {
                     handleChange("weight")(text);
                     calculateIMC(text, values.height);
                   }}
@@ -151,7 +151,7 @@ const RecoverPage: React.FC = () => {
                   placeholder="Altura em cm"
                   placeholderTextColor="#94a3b8"
                   value={values.height}
-                  onChangeText={(text) => {
+                  onChangeText={(text: string) => {
                     handleChange("height")(text);
                     calculateIMC(values.weight, text);
                   }}
