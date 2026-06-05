@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { GRAPHQL_ENDPOINT } from "../config/auth";
 import AuthContext from "../AuthContext";
+import { isFirebaseReady, savePreferredSportsToCloud } from "../config/firebase";
 
 const SPORTS = ["Futebol", "Vôlei", "Basquete", "Natação", "Corrida", "Yoga", "Musculação", "Ciclismo"];
 const STORAGE_KEY = "preferred_sports";
@@ -41,7 +42,7 @@ const SportsPage: React.FC = () => {
         }
       `;
 
-      try {
+        try {
         const res = await fetch(endpoint, {
           method: "POST",
           headers: {
@@ -62,11 +63,35 @@ const SportsPage: React.FC = () => {
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
         Alert.alert("Esportes", "Preferências atualizadas no servidor.");
         return;
-      } catch (err) {
-        console.warn("Erro ao chamar API de esportes", err);
+        } catch (err) {
+          console.warn("Erro ao chamar API de esportes", err);
+          // Try saving to Firebase if available
+          if (isFirebaseReady && authContext.token) {
+            try {
+              await savePreferredSportsToCloud(String(authContext.token), updated);
+              await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+              Alert.alert("Esportes", "Preferências atualizadas no Firebase (fallback).");
+              return;
+            } catch (ferr) {
+              console.warn("Falha ao salvar esportes no Firebase", ferr);
+            }
+          }
+
+          await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+          Alert.alert("Esportes", "Preferências atualizadas localmente (erro de rede).");
+          return;
+        }
+    }
+
+    // If GraphQL not available, try Firebase
+    if (isFirebaseReady && authContext.token) {
+      try {
+        await savePreferredSportsToCloud(String(authContext.token), updated);
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-        Alert.alert("Esportes", "Preferências atualizadas localmente (erro de rede).");
+        Alert.alert("Esportes", "Preferências atualizadas no Firebase.");
         return;
+      } catch (ferr) {
+        console.warn("Falha ao salvar esportes no Firebase", ferr);
       }
     }
 

@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TextInput, Button } from "../components";
 import { GRAPHQL_ENDPOINT } from "../config/auth";
 import AuthContext from "../AuthContext";
+import { isFirebaseReady, saveProfileToCloud } from "../config/firebase";
 
 const PROFILE_KEY = "user_profile";
 
@@ -40,6 +41,22 @@ const ProfilePage: React.FC = () => {
       const canUseApi = endpoint.length > 0 && !endpoint.includes("your-graphql-endpoint.com");
 
       if (canUseApi && authContext.token) {
+                } catch (err) {
+                  console.warn("Falha ao chamar API de perfil", err);
+                  // If Firebase is available, try saving to Firebase
+                  if (isFirebaseReady) {
+                    try {
+                      await saveProfileToCloud(String(authContext.token ?? 'local'), values as any);
+                      Alert.alert("Perfil", "Dados salvos no Firebase (fallback).");
+                      return;
+                    } catch (ferr) {
+                      console.warn("Falha ao salvar no Firebase", ferr);
+                    }
+                  }
+                  await AsyncStorage.setItem(PROFILE_KEY, JSON.stringify(values));
+                  Alert.alert("Perfil", "Dados salvos localmente (erro de rede).");
+                  return;
+                }
         const UPDATE_PROFILE = `
           mutation UpdateProfile($name: String!, $email: String!, $height: Float, $weight: Float) {
             updateProfile(name: $name, email: $email, height: $height, weight: $weight) {
@@ -85,7 +102,19 @@ const ProfilePage: React.FC = () => {
         }
       }
 
-      // Fallback local save when API not configured or no token
+      // If API not configured, try Firebase as alternative
+      if (isFirebaseReady && authContext.token) {
+        try {
+          await saveProfileToCloud(String(authContext.token), values as any);
+          Alert.alert("Perfil", "Dados salvos no Firebase.");
+          await AsyncStorage.setItem(PROFILE_KEY, JSON.stringify(values));
+          return;
+        } catch (ferr) {
+          console.warn("Falha ao salvar no Firebase", ferr);
+        }
+      }
+
+      // Final fallback: local save
       await AsyncStorage.setItem(PROFILE_KEY, JSON.stringify(values));
       Alert.alert("Perfil", "Dados salvos localmente.");
     } catch (e) {

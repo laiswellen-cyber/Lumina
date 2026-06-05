@@ -46,3 +46,29 @@ export const loadProfileFromCloud = async (userId: string) => {
   const snapshot = await getDoc(doc(db, 'profiles', userId));
   return snapshot.exists() ? snapshot.data() : null;
 };
+
+export const savePreferredSportsToCloud = async (userId: string, sports: string[]) => {
+  if (!db) {
+    throw new Error('Firebase não configurado. Configure as credenciais reais do Firebase para salvar na nuvem.');
+  }
+
+  await setDoc(doc(db, 'preferences', userId), { sports, updatedAt: serverTimestamp() }, { merge: true });
+};
+
+export const loadPreferredSportsFromCloud = async (userId: string) => {
+  if (!db) return null;
+
+  const snapshot = await getDoc(doc(db, 'preferences', userId));
+  return snapshot.exists() ? snapshot.data() : null;
+};
+
+export const saveSettingsToCloud = async (userId: string, settings: Record<string, unknown>) => {
+  if (!db) throw new Error('Firebase não configurado.');
+  await setDoc(doc(db, 'settings', userId), { ...settings, updatedAt: serverTimestamp() }, { merge: true });
+};
+
+export const loadSettingsFromCloud = async (userId: string) => {
+  if (!db) return null;
+  const snapshot = await getDoc(doc(db, 'settings', userId));
+  return snapshot.exists() ? snapshot.data() : null;
+};
