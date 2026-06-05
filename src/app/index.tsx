@@ -245,7 +245,7 @@ const LandingPage: React.FC = () => {
             <TouchableOpacity
               onPress={() => {
                 setMenuOpen(false);
-                router.push("/sports");
+                router.push("/sports" as any);
               }}
               style={{ paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, backgroundColor: "transparent", marginTop: 4 }}
             >
@@ -257,7 +257,7 @@ const LandingPage: React.FC = () => {
             <TouchableOpacity
               onPress={() => {
                 setMenuOpen(false);
-                router.push("/settings");
+                router.push("/settings" as any);
               }}
               style={{
                 paddingVertical: 12,
@@ -277,7 +277,7 @@ const LandingPage: React.FC = () => {
             <TouchableOpacity
               onPress={() => {
                 setMenuOpen(false);
-                router.push("/privacy");
+                router.push("/privacy" as any);
               }}
               style={{
                 paddingVertical: 12,
@@ -297,7 +297,7 @@ const LandingPage: React.FC = () => {
             <TouchableOpacity
               onPress={() => {
                 setMenuOpen(false);
-                router.push("/profile");
+                router.push("/profile" as any);
               }}
               style={{
                 paddingVertical: 12,
