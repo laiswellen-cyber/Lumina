@@ -14,4 +14,12 @@ O aplicativo foi estruturado com uma interface moderna e intuitiva, dividida em 
  
  IMC: Uma ferramenta prática e direta para o usuário calcular seu Índice de Massa Corporal e monitorar sua saúde física básica.
 
+Tecnologias Utilizadas
+
+ Base do App: React Native (v0.81.5) com Expo (v54) e TypeScript.
+Gerenciamento de Dados e APIs: GraphQL & Apollo Client
+Firebase
+Armazenamento Local (Banco de Dados Interno): Dexie (uma camada sobre o IndexedDB) e Async Storage.
+Navegação: Expo Router (v6).
+
  Integrante: Lais Wellen Furtado de Moura
